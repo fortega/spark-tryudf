@@ -5,15 +5,14 @@ import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.udf
 import scala.util.{Try, Failure, Success}
 
-
 object Main extends App {
-  val positiveOrZero = TryUdf {
-    (text: String) => Try {
+  val positiveOrZero = TryUdf[String, Int] { (text: String) =>
+    Try {
       val value = text.toInt
       if (value > 0)
-        text
+        value
       else
-        "0"
+        0
     }
   }
 
@@ -55,12 +54,14 @@ object Main extends App {
     .select($"raw", $"result" ("exception") as "exception")
   error.show(false)
   error.explain()
-  
+
   val numTotal = data.count
   val numError = error.count
   spark.stop()
 
-  println(s"readed: $numTotal | error: $numError (${numError*100.0/numTotal}%)")
-  val exitCode = if(numError == 0) 0 else 1
+  println(
+    s"readed: $numTotal | error: $numError (${numError * 100.0 / numTotal}%)"
+  )
+  val exitCode = if (numError == 0) 0 else 1
   sys.exit(exitCode)
 }
