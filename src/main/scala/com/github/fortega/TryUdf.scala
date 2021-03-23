@@ -1,7 +1,8 @@
 package com.github.fortega
 
-import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.UserDefinedFunction
+import org.apache.spark.sql.functions.{col, udf }
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Try, Success, Failure}
 
@@ -21,4 +22,7 @@ object TryUdf {
       case Success(value) => Result(Some(value), null, origin)
     }
   }
+
+  def succed(df: DataFrame, columnName: String) = df.filter(col(columnName)("exception") isNull)
+  def error(df: DataFrame, columnName: String) = df.filter(col(columnName)("exception") isNotNull)
 }
