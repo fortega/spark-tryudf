@@ -36,10 +36,10 @@ class TryUdfTest extends AnyFlatSpec {
     val data = raw
       .withColumn(resultColumn, positiveOrZero(col(rawColumn)))
 
-    val succed = TryUdf.succed(data, resultColumn)
-    val error = TryUdf.error(data, resultColumn)
+    val success = TryUdf.success(data, resultColumn)
+    val failure = TryUdf.failure(data, resultColumn)
 
-    assert(succed.count == 3)
-    assert(error.count == 3)
+    assert(success.count == 3)
+    assert(failure.count == 3)
   }
 }
